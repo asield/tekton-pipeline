@@ -1,1 +1,1 @@
-# Tekton- Pipeline example
+# Tekton Pipeline example
