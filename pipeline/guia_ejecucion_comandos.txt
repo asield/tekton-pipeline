@@ -1,0 +1,72 @@
+#NOTAS: Durante el despliegue, el nombre del despliegue debe ser identico al del repositorio de github
+#ingresa al clúster vía CLI con el token del clúster
+#ANTES DE CONTINUAR INSTALA EL PIPELINE CONNECTOR
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/sub.yaml
+#instala el CLI de Tekton
+#https://github.com/tektoncd/cli#installing-tkn
+
+#instala los pipelines de tekton en openshift NO HACER caso a esta sección
+#oc new-project tekton-pipelines
+#oc adm policy add-scc-to-user anyuid -z tekton-pipelines-controller
+#oc adm policy add-scc-to-user anyuid -z tekton-pipelines-webhook
+#oc apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.notags.yaml
+#kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/previous/v0.1.0/release.yaml
+#kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.24.1/release.yaml
+#################################################################
+#creación del proyecto
+oc new-project pipelines-tutorial
+#verificación de permisos
+oc get serviceaccount pipeline
+
+
+#despliega los siguientes yaml para indicar la ubicación de los yaml de despliegue y la secuencia de despliegue
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/tareas_despliegue.yaml
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/actualizacion_despliegue.yaml
+#creacion del pipeline
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/pipeline.yaml
+
+#listado de las tareas desplegadas
+tkn task ls
+
+
+#ejecucion manual del pipelines
+tkn pipeline start build-and-deploy -w \
+name=shared-workspace,volumeClaimTemplateFile=https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/pv.yaml \
+-p deployment-name=tekton-pipeline \
+-p git-url=https://github.com/asield/tekton-pipeline.git \
+-p IMAGE=image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/tekton-pipeline
+
+#revision del progreso del pipelines
+tkn pipeline list
+#tkn pipelinerun ls
+#tkn pipeline logs -f
+#tomara algunos minutos para que se realice el tareas_despliegue
+
+#ahora crearemos el template del trigger
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/disparador-plantilla.yaml
+#ahora crearemos el binding del TriggerTemplate
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/disparador-binding.yaml
+#creacion del trigger
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/disparador.yaml
+#ahora habilitaremos la recepcion de eventos de github
+oc create -f https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/eventlistener.yaml
+#ahora habilitaremos una URL para la recepcion de eventos de githubusercontent
+oc expose svc el-tektonpipeline-listener
+
+#Limpieza del ambiente
+oc delete deployment tekton-pipeline
+oc delete service tekton-pipeline-service
+oc delete route tekton-pipeline-route
+
+oc delete pipeline build-and-deploy
+oc delete task update-deployment
+oc delete task apply-manifests
+oc delete LimitRange limit-mem-cpu-per-container
+
+oc delete TriggerTemplate tekton-pipeline-template
+oc delete TriggerBinding tekton-pipeline-binding
+oc delete Trigger disparador-tekton-pipeline
+oc delete EventListener clienteapi-listener
+
+
+oc delete Subscription openshift-pipelines-operator
