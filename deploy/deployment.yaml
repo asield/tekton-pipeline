@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: tekton-pipeline
+  name: tekton-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tekton-pipeline
+  template:
+    metadata:
+      labels:
+        app: tekton-pipeline
+    spec:
+      containers:
+      - name: tekton-pipeline
+        image: image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/tekton-pipeline
+        ports:
+          - containerPort: 3000
+            protocol: TCP

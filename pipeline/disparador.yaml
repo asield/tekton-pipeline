@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: Trigger
+metadata:
+  name: disparador-tekton-pipeline
+spec:
+  serviceAccountName: pipeline
+  bindings:
+    - ref: tekton-pipeline-binding
+  template:
+    name: tekton-pipeline-template
