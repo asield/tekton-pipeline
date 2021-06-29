@@ -18,5 +18,5 @@ spec:
       - name: tekton-pipeline
         image: image-registry.openshift-image-registry.svc:5000/jns-hdi/tekton-pipeline
         ports:
-          - containerPort: 3000
+          - containerPort: 80
             protocol: TCP
