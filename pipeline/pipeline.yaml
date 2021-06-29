@@ -35,7 +35,7 @@ spec:
   - name: git-revision
     type: string
     description: revision a ser usada del repositorio
-    default: "master"
+    default: "main"
   - name: IMAGE
     type: string
     description: imagen a construirse desde codigo
