@@ -34,7 +34,7 @@ tkn pipeline start build-and-deploy -w \
 name=shared-workspace,volumeClaimTemplateFile=https://raw.githubusercontent.com/asield/tekton-pipeline/main/pipeline/pv.yaml \
 -p deployment-name=tekton-pipeline \
 -p git-url=https://github.com/asield/tekton-pipeline.git \
--p IMAGE=image-registry.openshift-image-registry.svc:5000/pipelines-tutorial/tekton-pipeline
+-p IMAGE=image-registry.openshift-image-registry.svc:5000/jns-hdi/tekton-pipeline
 
 #revision del progreso del pipelines
 tkn pipeline list
