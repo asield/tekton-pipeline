@@ -15,6 +15,12 @@ stages:
 - stage: Build
   displayName: Build image
   jobs:
+- task: oc-cmd@2
+  inputs:
+    connectionType: 'OpenShift Connection Service'
+    openshiftService: 'Openshift Javanes'
+    cmd: 'oc new-project azure-prueba'
+    uselocalOc: true
   - job: Build
     displayName: Build
     pool:
