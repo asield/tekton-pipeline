@@ -12,6 +12,20 @@ variables:
   tag: '$(Build.BuildId)'
 
 stages:
+- stage: Project
+  displayName: Build Project
+  jobs:
+  - job: Project
+    displayName: Project
+    pool:
+      name: default
+    steps:
+    - task: oc-cmd@2
+      inputs:
+        connectionType: 'OpenShift Connection Service'
+        openshiftService: 'Openshift Javanes'
+        cmd: 'oc new-project azure-prueba'
+
 - stage: Build
   displayName: Build image
   jobs:
@@ -27,8 +41,4 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
-- task: oc-cmd@2
-  inputs:
-    connectionType: 'OpenShift Connection Service'
-    openshiftService: 'Openshift Javanes'
-    cmd: 'oc new-project azure-prueba'
+
