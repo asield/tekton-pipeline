@@ -15,10 +15,20 @@ stages:
 - stage: Build
   displayName: Build image
   jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      name: default
+    steps:
+    - task: Docker@2
+      displayName: Build an image
+      inputs:
+        command: build
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        tags: |
+          $(tag)
 - task: oc-cmd@2
   inputs:
     connectionType: 'OpenShift Connection Service'
     openshiftService: 'Openshift Javanes'
     cmd: 'oc new-project azure-prueba'
-    uselocalOc: true
-  
