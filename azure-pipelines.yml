@@ -18,5 +18,5 @@ stages:
       inputs:
         connectionType: 'OpenShift Connection Service'
         openshiftService: 'Openshift Javanes'
-        cmd: 'oc new-project azure-prueba'
+        cmd: 'oc new-project azure-pruebas'
 
