@@ -19,4 +19,6 @@ stages:
         connectionType: 'OpenShift Connection Service'
         openshiftService: 'Openshift Javanes'
         cmd: 'oc new-project azure-pruebas'
+    - task: SonarQubeAnalyze@4
+      
 
